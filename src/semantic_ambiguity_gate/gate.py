@@ -118,8 +118,8 @@ class AmbiguityGate:
                 receipt=None,
             )
 
-        max_sev = max(f.severity for f in findings)
-        if max_sev == Severity.HIGH:
+                has_high = any(f.severity == Severity.HIGH for f in findings)
+            if has_high:
             return self._refuse(
                 decision_input,
                 findings,
