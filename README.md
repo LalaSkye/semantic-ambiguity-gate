@@ -1,31 +1,35 @@
 # semantic-ambiguity-gate
 
-A small Python proof surface showing that unresolved semantic ambiguity
-should refuse before consequence.
+## Public disclosure boundary
 
-> Semantic ambiguity is not permission.
->
-> If meaning is unresolved at the point of consequence, the gate refuses
-> or holds before execution.
+This repository is a public inspection surface, not full architecture disclosure.
+
+It shows a bounded claim, a minimal evidence object, an inspection path, and the claim limit.
+
+See [`PUBLIC_DISCLOSURE_BOUNDARY.md`](PUBLIC_DISCLOSURE_BOUNDARY.md).
 
 ## What this repo is
 
-A deterministic, dependency-free Python module. Given a structured
-`DecisionInput`, it returns one of `ALLOW`, `HOLD`, or `REFUSE`, and
-writes a structured receipt when execution does not proceed.
+A small deterministic Python proof surface showing one narrow claim:
 
-No external services. No LLM calls. No web calls. No hidden state.
+> Unresolved semantic ambiguity can trigger HOLD / REFUSE rather than silently proceeding.
+
+No external services. No LLM calls. No web calls.
 
 ## What it demonstrates
 
-- An input can be checked for unresolved meaning.
-- Unresolved meaning returns `HOLD` or `REFUSE`.
-- The action does not proceed.
-- A structured receipt explains why and what consequence was prevented.
+On the demonstrated path:
+
+- an input can be checked for unresolved meaning
+- unresolved meaning returns `HOLD` or `REFUSE`
+- the action does not proceed
+- a structured receipt explains why and what consequence was prevented
 
 ## What it does NOT prove
 
-This repo is a narrow, path-local ambiguity gate. It does not prove:
+This repo is a narrow, path-local ambiguity gate.
+
+It does not prove:
 
 - production enforcement
 - enterprise readiness
@@ -34,6 +38,7 @@ This repo is a narrow, path-local ambiguity gate. It does not prove:
 - full semantic understanding
 - complete AI safety
 - that ambiguity is solved generally
+- the wider execution-boundary governance architecture
 
 ## Quick start
 
@@ -44,66 +49,38 @@ python -m pip install -e ".[test]"
 python -m pytest
 ```
 
-## Example input
+## Inspection path
 
-```python
-from semantic_ambiguity_gate import evaluate, DecisionInput
+Run the tests and inspect the demonstrated HOLD / REFUSE behaviour.
 
-result = evaluate(
-    DecisionInput(
-        actor="manager_x",
-        action="grant",
-        target="production_db",
-        requested_scope="temporary contractor admin access",
-        authority_reference="ticket-123",
-    )
-)
+The narrow question this repo answers is:
 
-print(result.decision.value)   # REFUSE
-print(result.reason)
-print(result.receipt)
-```
+**Can unresolved meaning prevent the demonstrated action from proceeding?**
 
-## Example HOLD / REFUSE output
+Expected answer:
+
+**Yes.**
+
+## Example result shape
 
 ```text
 decision: REFUSE
 allowed: False
 reason: high-severity ambiguity present; refusing before consequence
-findings:
-  - term: admin access
-    severity: HIGH
-    issue: admin rights set is not enumerated
-    required_resolution: enumerate exact permissions or role binding
-  - term: temporary
-    severity: HIGH
-    issue: duration is undefined
-    required_resolution: specify start, end, and time zone
-  - term: contractor
-    severity: MEDIUM
-    issue: contractor identity and scope are not bound
-    required_resolution: specify contractor identity, employer, contract reference
-receipt:
-  receipt_id: rcpt_<sha256-prefix>
-  decision: REFUSE
-  timestamp: 2026-05-12T18:00:00+00:00
-  consequence_prevented: refused 'grant' on target 'production_db' ...
+receipt_written: true
 ```
 
 ## Claim boundary
 
-This repo demonstrates a narrow, path-local ambiguity gate. The receipt
-proves only that the gate refused at this path on this input. It does
-not prove that the gate cannot be bypassed at a different layer, nor
-that the receipt is legally admissible in any jurisdiction.
+This repo proves only that the demonstrated path refused or held on unresolved semantic ambiguity for the tested inputs.
 
-## Relation to execution-boundary governance
+It does not prove that the gate cannot be bypassed at another layer, nor that the receipt is legally admissible in any jurisdiction.
 
-This module is intended as one path-local check that can sit in front
-of a consequence-producing action. It complements (but does not replace)
-identity, authority, and runtime-enforcement layers further down the
-stack. The principle: unresolved meaning at the point of consequence
-should fail closed, not proceed.
+## Relation to wider work
+
+This is one local proof object.
+
+It should not be treated as proof of the whole system.
 
 ## License
 
